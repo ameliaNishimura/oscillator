@@ -1,0 +1,6 @@
+/* FEM Quantum Harmonic Oscillator
+ * Author: Amelia Nishimura
+ * 
+ * Generates approximations of the energy levels and wavefunctions of the quantum
+ * harmonic oscillator using finite element analysis (FEM).
+ */
