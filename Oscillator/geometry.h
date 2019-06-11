@@ -9,13 +9,15 @@
 #define GEOMETRY_H_
 
 struct Geometry {
-  int xmin;  // Lower limit of evaluation
-  int xmax;  // Upper limit of evaluation
-  int nelem; // Number of elements to generate
+  int x_min;    
+  int x_max;    
+  int n_elem;   
+  float elem_size;
   // Add ndegfreedom later?
 };
 
 // Function prototypes
-struct Geometry *defGeometry(int range, int nelem);
+struct Geometry *makeGeometry(int range, int n_elem);
+void printGeometry(struct Geometry* g);
 
 #endif /* GEOMETRY_H_ */
