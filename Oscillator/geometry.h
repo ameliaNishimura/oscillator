@@ -17,7 +17,7 @@ struct Geometry {
 };
 
 // Function prototypes
-struct Geometry *makeGeometry(int range, int n_elem);
+struct Geometry *makeGeometry();
 void printGeometry(struct Geometry* g);
 
 #endif /* GEOMETRY_H_ */

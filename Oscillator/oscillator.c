@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
   gsl_matrix* A;
   gsl_matrix* B;
-  setupProblem(makeGeometry(2,10),A,B);
+  setupProblem(A,B);
   
   return 0;
 }

@@ -10,9 +10,19 @@
  * @param n_elem Number of elements to evaluate.
  * @return Pointer to newly allocated Geometry struct on the heap.
  */
-struct Geometry* makeGeometry(int range, int n_elem) {
+struct Geometry* makeGeometry() {
+
+  int range = 5;
+  int n_elem = 20;
   struct Geometry* g;
   struct Geometry tmp;
+
+  printf("Please enter range as >5 -> [-5,5]: ");
+  scanf("%d", &range);
+
+  printf("Please enter number of elements to evaluate: ");
+  scanf("%d", &n_elem);
+  
 
   g = (struct Geometry*) malloc(sizeof(struct Geometry));
 
