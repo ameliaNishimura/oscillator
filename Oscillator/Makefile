@@ -5,6 +5,7 @@
 # 	make all		-- Generates executable file by compiling
 #	make oscillator 	-- Same as "make all"
 #	make oscillator.o	-- (Re)generates oscillator.o by compiling
+#	make gauss.o		-- (Re)generates gauss.o by compiling
 #	make geometry.o		-- (Re)generates geometry.o by compiling
 #
 #	make clean		-- Removes object files, executable, and docs
@@ -18,12 +19,18 @@ CFLAGS = -Wall -g
 all: oscillator
 
 # Rule for building the executable
-oscillator: oscillator.o geometry.o
-	gcc $(CFLAGS) oscillator.o geometry.o -o oscillator
+oscillator: oscillator.o gauss.o geometry.o eigenproblem.o
+	gcc $(CFLAGS) oscillator.o gauss.o geometry.o eigenproblem.o -o oscillator
 
 # Rules for building each object file
-oscillator.o: oscillator.c geometry.h
+oscillator.o: oscillator.c eigenproblem.h
 	gcc $(CFLAGS) -c oscillator.c
+
+eigenproblem.o: eigenproblem.c eigenproblem.h
+	gcc $(CFLAGS) -c eigenproblem.c
+
+gauss.o: gauss.c gauss.h
+	gcc $(CFLAGS) -c gauss.c
 
 geometry.o: geometry.c geometry.h
 	gcc $(CFLAGS) -c geometry.c
