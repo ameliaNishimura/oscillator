@@ -41,6 +41,7 @@ geometry.o: geometry.c geometry.h
 clean:
 	rm -f *.o oscillator
 	rm -f -r html latex
+	rm -f *.dat
 
 # Command "make docs": Create documentation
 docs:

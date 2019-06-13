@@ -6,6 +6,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_math.h>
+#include <string.h>
 #include "eigenproblem.h"
 #include "geometry.h"
 #include "gauss.h"
@@ -26,7 +27,8 @@ int setupProblem(struct Geometry* g, gsl_matrix* A, gsl_matrix* B) {
   double* weights;
   double pt, wt;
   double x_global;  // Global coordinate
-  double poly_0, poly_1, dpoly_0, dpoly_1;
+  double* poly = (double*) malloc(2*sizeof(double));
+  double* dpoly = (double*) malloc(2*sizeof(double));
 
   int i, j;
   double x_f, x_p;
@@ -53,22 +55,21 @@ int setupProblem(struct Geometry* g, gsl_matrix* A, gsl_matrix* B) {
 
       pt         = *(points + i_gauss);
       wt         = *(weights + i_gauss);
-      printf("pt:%2.4f\t wt:%2.4f\n", pt, wt);
       x_global   = x_mid + (x_jacobian * pt);
 
       /* Get values of linear interpolation polynomial at pt */
-      poly_0     = (1.0 - pt)/2.0;
-      poly_1     = (1.0 + pt)/2.0;
+      poly[0]     = (1.0 - pt)/2.0;
+      poly[1]     = (1.0 + pt)/2.0;
 
       /* Get values of derivatives of interpolation polynomials at pt */
-      dpoly_0    = -1.0/(2.0 * x_jacobian);
-      dpoly_1    = 1.0/(2.0 * x_jacobian);
+      dpoly[0]    = -1.0/(2.0 * x_jacobian);
+      dpoly[1]    = 1.0/(2.0 * x_jacobian);
 
       /* Loop to perform FEM calculations */
       for (i = 0; i < 2; i++) {
 	for (j = 0; j < 2; j++) {
-	  x_p = wt * x_jacobian * poly_0 * poly_1;
-	  x_f = (wt * x_jacobian * dpoly_0 * dpoly_1) + (x_p * x_global * x_global);
+	  x_p = wt * x_jacobian * poly[i] * poly[j];
+	  x_f = (wt * x_jacobian * dpoly[i] * dpoly[j]) + (x_p * x_global * x_global);
 	  
 	  *(gsl_matrix_ptr(A, i + i_el, j + i_el)) += x_f;
 	  *(gsl_matrix_ptr(B, i + i_el, j + i_el)) += x_p;
@@ -88,15 +89,17 @@ int setupProblem(struct Geometry* g, gsl_matrix* A, gsl_matrix* B) {
  */
 int solveProblem() {
 
-  int i;
+  int i, n_lev;
   struct Geometry* g = makeGeometry();
-  gsl_matrix* A = gsl_matrix_alloc(g->n_elem + 1, g->n_elem + 1);
-  gsl_matrix* B = gsl_matrix_alloc(g->n_elem + 1, g->n_elem + 1); 
+  gsl_matrix* A = gsl_matrix_calloc(g->n_elem + 1, g->n_elem + 1);
+  gsl_matrix* B = gsl_matrix_calloc(g->n_elem + 1, g->n_elem + 1); 
   setupProblem(g, A, B);
   gsl_vector* e_vals = gsl_vector_calloc(g->n_elem + 1);
   gsl_vector_complex* e_cvals = gsl_vector_complex_calloc(g->n_elem + 1);
   gsl_matrix_complex* e_vecs = gsl_matrix_complex_calloc(g->n_elem + 1,g->n_elem + 1);
   gsl_eigen_genv_workspace* g_eigen = gsl_eigen_genv_alloc(g->n_elem + 1);
+  char* filename = (char*) malloc(24*sizeof(char));
+  FILE *output;
   
   /* Apply Dirichlet Boundary Conditions */
   for (i = 0; i < g->n_elem + 1; i++) {
@@ -126,11 +129,25 @@ int solveProblem() {
   /* Sort eigenvalues and eigenvectors in ascending order */
   gsl_eigen_genv_sort(e_cvals, e_vals, e_vecs, GSL_EIGEN_SORT_ABS_ASC);
 
-  /* Print out eigenvalues */
+  /* Print out first 10 eigenvalues */
   printf("Eigenvalues: \n");
-  for (i = 0; i < g->n_elem - 1; i++) {
+  for (i = 0; i < 10; i++) {
     printf("\t%2.6f\n", GSL_REAL(gsl_vector_complex_get(e_cvals, i)) /
 	   gsl_vector_get(e_vals, i));
+  }
+
+  /* Write solutions to file */
+  for (n_lev = 1; n_lev < 6; n_lev++) {
+
+    sprintf(filename, "wave%d.dat", n_lev);
+    output = fopen(filename, "w+");
+
+    for (i = 0; i < g->n_elem + 1; i++) {
+      fprintf(output, "%f\t%f\n", g->x_min+(i * g->elem_size),
+	      fabs(GSL_REAL(gsl_matrix_complex_get(e_vecs, i, n_lev-1))));
+    }
+
+    fclose(output);
   }
   
   return 0;
