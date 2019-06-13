@@ -12,7 +12,7 @@ struct Geometry {
   int x_min;    
   int x_max;    
   int n_elem;   
-  float elem_size;
+  double elem_size;
   // Add ndegfreedom later?
 };
 

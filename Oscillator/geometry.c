@@ -12,10 +12,9 @@
  */
 struct Geometry* makeGeometry() {
 
-  int range = 5;
-  int n_elem = 20;
+  int range;
+  int n_elem;
   struct Geometry* g;
-  struct Geometry tmp;
 
   printf("Please enter range as >5 -> [-5,5]: ");
   scanf("%d", &range);
@@ -26,12 +25,10 @@ struct Geometry* makeGeometry() {
 
   g = (struct Geometry*) malloc(sizeof(struct Geometry));
 
-  tmp.x_min = -range;
-  tmp.x_max = range;
-  tmp.n_elem = n_elem;
-  tmp.elem_size = (2. * range) / n_elem;
-  
-  *g = tmp;
+  g->x_min = -range;
+  g->x_max = range;
+  g->n_elem = n_elem;
+  g->elem_size = (2. * range) / n_elem;
 
   return g;
 }

@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
   gsl_matrix* A;
   gsl_matrix* B;
-  setupProblem(A,B);
+  solveProblem(A,B);
   
   return 0;
 }

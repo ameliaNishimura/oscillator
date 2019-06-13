@@ -41,12 +41,12 @@ int gauss(int order, double *pts, double *wts) {
     break;
 
   case 6:
-    *points     = 0.171324492379170345040296142173e0;
-    *(points+1) = 0.360761573048138607569833513838e0;
-    *(points+2) = 0.467913934572691047389870343990e0;
-    *weights    = 0.932469514203152027812301554494e0;
-    *(weights+1)= 0.661209386466264513661399595020e0;
-    *(weights+2)= 0.238619186083196908630501721681e0;
+    *points     = 0.932469514203152027812301554494e0;
+    *(points+1) = 0.661209386466264513661399595020e0;
+    *(points+2) = 0.238619186083196908630501721681e0;
+    *weights    = 0.171324492379170345040296142173e0;
+    *(weights+1)= 0.360761573048138607569833513838e0;
+    *(weights+2)= 0.467913934572691047389870343990e0;
     break;
 
   case 8:
@@ -98,6 +98,8 @@ int gauss(int order, double *pts, double *wts) {
     *(pts + i) = -*(points + i);
     *(pts + (order - 1 - i)) = *(points + i);
   } /* Deriving other half of quadrature points from given half */
+
+  printf("gauss success\n");
 
   return(0);
 }

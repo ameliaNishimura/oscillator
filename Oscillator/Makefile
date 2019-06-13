@@ -12,15 +12,17 @@
 #
 #	make docs		-- Generates documentation
 
-# Set CFLAGS to activate all warnings and enable debugger
-CFLAGS = -Wall -g
+# Set CFLAGS to activate all warnings
+CFLAGS = -Wall -I/usr/local/include
+
+LINKS = -lgsl -lgslcblas -lm
 
 # Default Rule: Build oscillator executable
 all: oscillator
 
 # Rule for building the executable
 oscillator: oscillator.o gauss.o geometry.o eigenproblem.o
-	gcc $(CFLAGS) oscillator.o gauss.o geometry.o eigenproblem.o -o oscillator
+	gcc -o oscillator oscillator.o gauss.o geometry.o eigenproblem.o $(LINKS)
 
 # Rules for building each object file
 oscillator.o: oscillator.c eigenproblem.h
