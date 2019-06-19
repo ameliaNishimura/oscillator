@@ -1,0 +1,16 @@
+set terminal svg
+set output 'c_eigs.svg'
+
+set xlabel "x"
+set ylabel "Energy"
+
+set yrange [0:50]
+
+set key top left
+
+plot [x = 0:19] (2*x)+1 title "Actual Energy" with lines, \
+     "e_5_20.dat" title "20 elements, |x|=5" with linespoints, \
+     "e_5_100.dat" title "100 elements, |x|=5" with linespoints, \
+     "e_5_1000.dat" title "1000 elements, |x|=5" with linespoints, \
+     "e_10_40.dat" title "40 elements, |x|=10" with linespoints, \
+     "e_10_200.dat" title "200 elements, |x|=10" with linespoints

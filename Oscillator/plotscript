@@ -1,0 +1,29 @@
+set terminal svg
+set output 'c_psi.svg'
+
+set xlabel "x"
+set ylabel "Wavefunction"
+
+set xrange [-5:5]
+
+set xzeroaxis
+set yzeroaxis
+set grid
+
+set style data linespoints
+
+plot "wave1.dat" title "n=0", \
+     "wave2.dat" title "n=1", \
+     "wave3.dat" title "n=2", \
+     "wave4.dat" title "n=3", \
+     "wave5.dat" title "n=4"
+
+set output 'c_psi2.svg'
+
+set ylabel "Wavefunction^2"
+
+plot "prob1.dat" title "n=0", \
+     "prob2.dat" title "n=1", \
+     "prob3.dat" title "n=2", \
+     "prob4.dat" title "n=3", \
+     "prob5.dat" title "n=4"
