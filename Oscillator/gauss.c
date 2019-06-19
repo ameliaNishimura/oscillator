@@ -99,7 +99,5 @@ int gauss(int order, double *pts, double *wts) {
     *(pts + (order - 1 - i)) = *(points + i);
   } /* Deriving other half of quadrature points from given half */
 
-  printf("gauss success\n");
-
   return(0);
 }

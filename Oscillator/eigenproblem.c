@@ -99,7 +99,10 @@ int solveProblem() {
   gsl_matrix_complex* e_vecs = gsl_matrix_complex_calloc(g->n_elem + 1,g->n_elem + 1);
   gsl_eigen_genv_workspace* g_eigen = gsl_eigen_genv_alloc(g->n_elem + 1);
   char* filename = (char*) malloc(24*sizeof(char));
-  FILE *output;
+  FILE *wave_output;
+  FILE *prob_output;
+  FILE *eigs_output;
+  double scale, s_a, s_b, tmp;
   
   /* Apply Dirichlet Boundary Conditions */
   for (i = 0; i < g->n_elem + 1; i++) {
@@ -119,8 +122,6 @@ int solveProblem() {
 
   gsl_matrix_set(B, 0, 0, 1.0);
   gsl_matrix_set(B, g->n_elem, g->n_elem, 1.0);
-
-  printf("conditions applied\n");
   
   /* Generate eigenvalues and eigenvectors */
   gsl_eigen_genv(A, B, e_cvals, e_vals, e_vecs, g_eigen);
@@ -130,25 +131,38 @@ int solveProblem() {
   gsl_eigen_genv_sort(e_cvals, e_vals, e_vecs, GSL_EIGEN_SORT_ABS_ASC);
 
   /* Print out first 10 eigenvalues */
-  printf("Eigenvalues: \n");
-  for (i = 0; i < 10; i++) {
-    printf("\t%2.6f\n", GSL_REAL(gsl_vector_complex_get(e_cvals, i)) /
+  sprintf(filename, "e_%d_%d.dat", g->x_max, g->n_elem);
+  eigs_output = fopen(filename, "w+");
+  for (i = 0; i < 20; i++) {
+    fprintf(eigs_output, "%d\t%f\n", i, GSL_REAL(gsl_vector_complex_get(e_cvals, i)) /
 	   gsl_vector_get(e_vals, i));
-  }
+    
+  } /* Eigenvalue loop*/
+  fclose(eigs_output);
 
-  /* Write solutions to file */
+  /* Write solutions for first 5 eigenstates to file */
   for (n_lev = 1; n_lev < 6; n_lev++) {
 
+    /* Create a data file for the wavefunction */
     sprintf(filename, "wave%d.dat", n_lev);
-    output = fopen(filename, "w+");
+    wave_output = fopen(filename, "w+");
+    /* Create a data file for the probability function */
+    sprintf(filename, "prob%d.dat", n_lev);
+    prob_output = fopen(filename, "w+");
 
+    /* Write data to files */
     for (i = 0; i < g->n_elem + 1; i++) {
-      fprintf(output, "%f\t%f\n", g->x_min+(i * g->elem_size),
-	      fabs(GSL_REAL(gsl_matrix_complex_get(e_vecs, i, n_lev-1))));
+      tmp = GSL_REAL(gsl_matrix_complex_get(e_vecs, i, n_lev-1));
+      fprintf(wave_output, "%f\t%f\n", g->x_min+(i * g->elem_size),
+	      tmp);
+      fprintf(prob_output, "%f\t%f\n", g->x_min+(i * g->elem_size),
+	      tmp * tmp);
+	
     }
 
-    fclose(output);
-  }
+    fclose(wave_output);
+    fclose(prob_output);
+  } /* Writing data to file loop */
   
   return 0;
 }
